@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SG Lead Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="header-icon">&#9670;</span>
+        <h1>SG Lead Generator</h1>
+      </div>
+      <button id="themeToggle" aria-label="Toggle theme" title="Toggle dark/light mode">
+        <span class="icon-sun">&#9728;</span>
+        <span class="icon-moon">&#9790;</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card form-card">
+      <h2>Search Parameters</h2>
+
+      <div class="field-group">
+        <label for="sectorsInput">Sectors <span class="hint">Press Enter or comma to add</span></label>
+        <div class="tag-input" id="sectorsContainer">
+          <input type="text" id="sectorsInput" placeholder="e.g. Technology, Finance, Healthcare...">
+        </div>
+        <div class="quick-tags">
+          <span class="quick-tag-label">Quick add:</span>
+          <button class="quick-tag" data-field="sectors" data-value="Technology">Technology</button>
+          <button class="quick-tag" data-field="sectors" data-value="Finance">Finance</button>
+          <button class="quick-tag" data-field="sectors" data-value="Healthcare">Healthcare</button>
+          <button class="quick-tag" data-field="sectors" data-value="Logistics">Logistics</button>
+          <button class="quick-tag" data-field="sectors" data-value="Real Estate">Real Estate</button>
+          <button class="quick-tag" data-field="sectors" data-value="Food &amp; Beverage">F&amp;B</button>
+          <button class="quick-tag" data-field="sectors" data-value="Retail">Retail</button>
+          <button class="quick-tag" data-field="sectors" data-value="Education">Education</button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="titlesInput">Job Titles to Target <span class="hint">Who you want to reach</span></label>
+        <div class="tag-input" id="titlesContainer">
+          <input type="text" id="titlesInput" placeholder="e.g. CEO, Marketing Manager, CTO...">
+        </div>
+        <div class="quick-tags">
+          <span class="quick-tag-label">Quick add:</span>
+          <button class="quick-tag" data-field="titles" data-value="CEO">CEO</button>
+          <button class="quick-tag" data-field="titles" data-value="CTO">CTO</button>
+          <button class="quick-tag" data-field="titles" data-value="Marketing Manager">Marketing Manager</button>
+          <button class="quick-tag" data-field="titles" data-value="Operations Manager">Operations Manager</button>
+          <button class="quick-tag" data-field="titles" data-value="HR Manager">HR Manager</button>
+          <button class="quick-tag" data-field="titles" data-value="Sales Director">Sales Director</button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label>Target Groups</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="group" value="SME" checked>
+              <span>SME</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="group" value="Enterprise">
+              <span>Enterprise</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="group" value="MNC">
+              <span>MNC</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="group" value="Startup">
+              <span>Startup</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="maxResults">Max Results: <strong id="maxResultsDisplay">20</strong></label>
+          <input type="range" id="maxResults" min="5" max="100" value="20" step="5">
+          <div class="range-labels"><span>5</span><span>100</span></div>
+        </div>
+      </div>
+
+      <div id="queryPreview" class="query-preview hidden">
+        <span class="query-preview-label">Search queries:</span>
+        <span id="queryPreviewText"></span>
+      </div>
+
+      <button id="searchBtn" class="btn-primary">
+        <span class="btn-icon">&#128269;</span> Find Leads
+      </button>
+    </section>
+
+    <section class="card loading-card hidden" id="loadingCard">
+      <div class="spinner"></div>
+      <p id="loadingStatus" class="loading-status">Initializing search...</p>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <p class="loading-note">Google Maps scraping typically takes 30–90 seconds.</p>
+    </section>
+
+    <section class="card error-card hidden" id="errorCard">
+      <div class="error-icon">&#9888;</div>
+      <p id="errorMessage">An error occurred.</p>
+      <button id="retryBtn" class="btn-secondary">Try Again</button>
+    </section>
+
+    <section class="card results-card hidden" id="resultsCard">
+      <div class="results-header">
+        <div class="results-meta">
+          <span id="resultCount" class="result-count">0 leads found</span>
+          <span id="targetingNote" class="targeting-note"></span>
+        </div>
+        <button id="exportBtn" class="btn-secondary">
+          <span>&#11015;</span> Export CSV
+        </button>
+      </div>
+      <div class="table-wrapper">
+        <table id="resultsTable">
+          <thead>
+            <tr>
+              <th data-col="title" class="sortable">Business Name <span class="sort-arrow"></span></th>
+              <th data-col="categoryName" class="sortable">Category <span class="sort-arrow"></span></th>
+              <th data-col="address" class="sortable">Address <span class="sort-arrow"></span></th>
+              <th data-col="phone">Phone</th>
+              <th data-col="website">Website</th>
+              <th data-col="totalScore" class="sortable">Rating <span class="sort-arrow"></span></th>
+              <th data-col="reviewsCount" class="sortable">Reviews <span class="sort-arrow"></span></th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
